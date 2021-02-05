@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  python:
+    build: docker
+    entrypoint: ["tail", "-f", "/dev/null"]
+    volumes:
+      - ./src:/code
