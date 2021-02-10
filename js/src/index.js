@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import { getQuote } from './quoteApi.js';
 
 const config = {
-    interval: 65,
+    interval: 60,
     symbol: 'gme',
 };
 
@@ -23,34 +23,35 @@ const config = {
     const quotePoller = new Observable(sub => {
         let timeout = null;
 
-        const push = () => {
+        const fetchNextData = () => {
             timeout = setTimeout(
                 () => {
                     getQuote(config.symbol).then((data) => {
                         sub.next(data);
-                        push();
+                        fetchNextData();
                     });
                 },
-                config.interval * 1000,
+                config.interval * 1001,
             );
             return () => clearTimeout(timeout);
         };
 
         getQuote(config.symbol).then((data) => {
             sub.next(data);
-            push();
+            fetchNextData();
         });
     });
 
     quotePoller
         .pipe(
-            filter(val => minPrice && val < minPrice)
+            filter(val => !minPrice || val.price < minPrice),
         )
         .subscribe({
             next: ev => {
-                console.log(ev);
-                if (!minPrice) console.log('No price set yet.');
-                console.log(`Setting minPrice to: ${ev.price}`);
+                console.debug(`fetched`, ev);
+                if (!minPrice) console.log('No minPrice set yet.');
+                console.log(`Setting new minPrice to: ${ev.price}`);
+                minPrice = ev.price;
             },
             error: err => console.error(err),
             complete: () => {

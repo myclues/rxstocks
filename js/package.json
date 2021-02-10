@@ -4,9 +4,15 @@
   "main": "src/index.js",
   "repository": "git@bitbucket.org:myclues/rxstocks.git",
   "author": "Mike Liu <myclues@gmail.com>",
-  "type": "module",
   "scripts": {
-    "test": "node src/index.js"
+    "test": "nodemon --exec babel-node src/index.js"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.13",
+    "@babel/core": "^7.12.13",
+    "@babel/node": "^7.12.13",
+    "@babel/preset-env": "^7.12.13",
+    "nodemon": "^2.0.7"
   },
   "dependencies": {
     "axios": "^0.21.1",
