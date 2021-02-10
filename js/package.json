@@ -1,0 +1,16 @@
+{
+  "name": "rxstocks",
+  "version": "0.0.1",
+  "main": "src/index.js",
+  "repository": "git@bitbucket.org:myclues/rxstocks.git",
+  "author": "Mike Liu <myclues@gmail.com>",
+  "type": "module",
+  "scripts": {
+    "test": "node src/index.js"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "dayjs": "^1.10.4",
+    "rxjs": "^6.6.3"
+  }
+}
