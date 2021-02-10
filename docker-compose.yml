@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   python:
-    build: docker
-    entrypoint: ["tail", "-f", "/dev/null"]
+    build: server
+    entrypoint: ["python", "app.py"]
+    ports:
+      - "5000:5000"
     volumes:
-      - ./src:/code
+      - ./server/src:/code

@@ -1,0 +1,48 @@
+from flask import (
+    Flask,
+    jsonify,
+)
+import yfinance as yf
+import json
+
+app = Flask("turkquotesy")
+
+tickers = {}
+
+
+COLUMNS = [
+    "Open",
+    "High",
+    "Low",
+    "Close",
+    "Volume",
+]
+
+
+@app.route("/api/symbol/<symbol>")
+def quote(symbol):
+    try:
+        ticker = tickers[symbol]
+    except KeyError as e:
+        print(f"DEBUG: {symbol} has no ticker yet. creating...")
+        tickers[symbol] = yf.Ticker(symbol)
+        ticker = tickers[symbol]
+
+    # fetch historical data for 1 day in 1-min increments
+    data = ticker.history(period="1d", interval="1m")
+    # print(data)
+
+    # get latest entry
+    datetime = data.index[-1]
+    quote = data.tail(1)
+
+    # re-map data
+    res = {"date": datetime.strftime("%Y/%m/%d %H:%M:%S")}
+    for key in COLUMNS:
+        res[key.lower()] = quote[key].tolist()[0]
+
+    return res
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", debug=True)
