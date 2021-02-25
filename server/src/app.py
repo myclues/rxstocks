@@ -4,6 +4,7 @@ from flask import (
 )
 import yfinance as yf
 import json
+from mongomodels import *
 
 app = Flask("turkquotesy")
 
@@ -18,8 +19,19 @@ COLUMNS = [
     "Volume",
 ]
 
+@app.route("/api/history/<symbol>")
+def history(symbol):
+    try:
+        data = Quote.objects(symbol__iexact=symbol).order_by('-datetime')
+        res = list(map(QuoteSerializer, list(data)))
+        return {
+            'data': res
+        }
+    except Exception as e:
+        print(e)
 
-@app.route("/api/symbol/<symbol>")
+
+@app.route("/api/fetch/<symbol>")
 def quote(symbol):
     try:
         ticker = tickers[symbol]

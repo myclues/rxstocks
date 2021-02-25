@@ -20,3 +20,11 @@ class Quote(Document):
             'datetime'
         ]
     }
+
+
+def QuoteSerializer(q):
+    return {
+        "symbol": q.symbol,
+        "price": float(q.price),
+        "datetime": q.datetime.isoformat(),
+    }
