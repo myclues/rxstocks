@@ -50,7 +50,8 @@ def quote(symbol):
 
     # re-map data
     res = {
-        "date": datetime.strftime("%Y/%m/%d %H:%M:%S"),
+        "symbol": symbol.lower(),
+        "datetime": datetime.strftime("%Y/%m/%d %H:%M:%S"),
         # for interval history, all price columns show same value
         "price": quote["Close"].tolist()[0],
     }

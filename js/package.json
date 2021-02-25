@@ -5,7 +5,7 @@
   "repository": "git@bitbucket.org:myclues/rxstocks.git",
   "scripts": {
     "test": "nodemon src/index.ts",
-    "poller": "nodemon --exec babel-node src/quotePoller.ts"
+    "poller": "nodemon src/quotePoller.ts"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.13",

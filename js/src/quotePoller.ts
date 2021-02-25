@@ -2,7 +2,7 @@ import { of, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import dayjs from 'dayjs';
 
-import { getQuote } from './quoteApi.js';
+import { Quote, getQuote } from './quoteApi';
 
 const config = {
     interval: 60,
@@ -44,10 +44,10 @@ const config = {
 
     quotePoller
         .pipe(
-            filter(val => !minPrice || val.price < minPrice),
+            filter((val: Quote) => !minPrice || val.price < minPrice),
         )
         .subscribe({
-            next: ev => {
+            next: (ev: Quote) => {
                 console.debug(`fetched`, ev);
                 if (!minPrice) console.log('No minPrice set yet.');
                 console.log(`Setting new minPrice to: ${ev.price}`);
