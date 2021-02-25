@@ -3,20 +3,26 @@
   "version": "0.0.1",
   "main": "src/index.js",
   "repository": "git@bitbucket.org:myclues/rxstocks.git",
-  "author": "Mike Liu <myclues@gmail.com>",
   "scripts": {
-    "test": "nodemon --exec babel-node src/index.js"
+    "test": "nodemon src/index.ts",
+    "poller": "nodemon --exec babel-node src/quotePoller.ts"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.13",
     "@babel/core": "^7.12.13",
     "@babel/node": "^7.12.13",
     "@babel/preset-env": "^7.12.13",
+    "@babel/preset-typescript": "^7.13.0",
+    "@babel/register": "^7.13.0",
+    "@types/node": "^14.14.31",
     "nodemon": "^2.0.7"
   },
   "dependencies": {
+    "@babel/runtime": "^7.13.7",
     "axios": "^0.21.1",
     "dayjs": "^1.10.4",
-    "rxjs": "^6.6.3"
+    "rxjs": "^6.6.3",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.2"
   }
 }

@@ -22,7 +22,7 @@ COLUMNS = [
 @app.route("/api/history/<symbol>")
 def history(symbol):
     try:
-        data = Quote.objects(symbol__iexact=symbol).order_by('-datetime')
+        data = Quote.objects(symbol__iexact=symbol).order_by('datetime')
         res = list(map(QuoteSerializer, list(data)))
         return {
             'data': res
