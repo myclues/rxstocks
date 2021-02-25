@@ -1,4 +1,5 @@
 flask
+mongoengine
 pandas
 rx
 yfinance
