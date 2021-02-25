@@ -8,3 +8,9 @@ services:
       - "5000:5000"
     volumes:
       - ./server/src:/code
+
+  db:
+    image: mongo
+    env_file: .env.dev
+    ports:
+      - "27017:27017"
