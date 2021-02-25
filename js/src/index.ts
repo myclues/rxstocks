@@ -57,7 +57,7 @@ const printRes = (result) => {
     console.log(`shares: ${result.numShares}\tavg: ${result.costAvg}\t\tvalue: ${stockValue}`);
 
     const color = ((result.stash + result.currentCash + (result.numShares * result.costAvg)) > config.startingCash) ? NodeColors.Green : NodeColors.Red;
-    console.log(`Portfolio value: ${color}$${cashTotal + stockValue}${NodeColors.Reset}`);
+    console.log(`Portfolio value: ${color}$${toDollars(cashTotal + stockValue)}${NodeColors.Reset}`);
     console.log('--------------');
 }
 
@@ -72,7 +72,7 @@ const getMoney = (res: State, quote: Quote) => {
         process.exit(0);
     }
 
-    console.log(`-----\n[${dayjs(quote.datetime).format('HH:mm')}]\t price: $${quote.price}`);
+    console.log(`[${dayjs(quote.datetime).format('HH:mm')}]\t price: $${quote.price}`);
 
     const now = dayjs(quote.datetime);
 
@@ -88,7 +88,6 @@ const getMoney = (res: State, quote: Quote) => {
     const sharesToBuy = Math.floor((res.currentCash - config.txFee) / quote.price);
 
     if (result.buybackCounter >= config.buybackDelay && sharesToBuy >= 1) {
-        // if ((res.numShares == 0 || res.isFalling) && sharesToBuy >= 1) {
         const tx = {
             datetime: now,
             price: quote.price,
@@ -106,7 +105,8 @@ const getMoney = (res: State, quote: Quote) => {
             txHistory: res.txHistory.concat([tx])
         }
 
-        console.log(`${NodeColors.Cyan}BUYING! (${tx.numShares} x ${tx.price}) = $${toDollars(cost)}\tremaining cash: $${result.currentCash} ${NodeColors.Reset}`);
+        console.log(`--------------\n${NodeColors.Cyan}BUYING! (${tx.numShares} x ${tx.price}) = $${toDollars(cost)}\tremaining cash: $${result.currentCash} ${NodeColors.Reset}`);
+        printRes(result);
     } else {
 
         const priceDiff = quote.price - res.costAvg;
@@ -134,8 +134,10 @@ const getMoney = (res: State, quote: Quote) => {
                 stash: toDollars(res.stash + stashAmount),
                 costAvg: 0,
                 txHistory: res.txHistory.concat([tx]),
+                buybackCounter: 0,
             }
-            console.log(`${NodeColors.Green}LOCK PROFITS!\t${toDollars(gain)}${NodeColors.Reset}`);
+            console.log(`--------------\n${NodeColors.Green}LOCK PROFITS!\t${toDollars(gain)}${NodeColors.Reset}`);
+            printRes(result);
         } else if (priceDiffPercent <= config.trailingStopLossPercent) {
             // sell and hedge
             const tx = {
@@ -154,18 +156,22 @@ const getMoney = (res: State, quote: Quote) => {
                 currentCash: toDollars(res.currentCash + gain),
                 costAvg: 0,
                 txHistory: res.txHistory.concat([tx]),
+                buybackCounter: 0,
             }
-            console.log(`${NodeColors.Red}STOP LOSS! (${tx.numShares} x ${tx.price}) = $${toDollars(gain)} (${percent(priceDiffPercent)}%)${NodeColors.Reset}`);
+            console.log(`--------------\n${NodeColors.Red}STOP LOSS! (${tx.numShares} x ${tx.price}) = $${toDollars(gain)} (${percent(priceDiffPercent)}%)${NodeColors.Reset}`);
+            printRes(result);
         } else {
-            // do nothing, bump latest date processed
+            if (res.buybackCounter < config.buybackDelay && res.txHistory.length) {
+                console.log(`Waiting ${config.buybackDelay - res.buybackCounter} more iterations before buying back in`);
+            }
             result = {
                 ...res,
                 latestDate: now,
+                buybackCounter: res.buybackCounter + 1,
             }
         }
     }
 
-    printRes(result);
     return result;
 };
 
