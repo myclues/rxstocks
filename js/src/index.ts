@@ -9,17 +9,19 @@ const NodeColors = {
     Red: "\x1b[31m",
     Green: "\x1b[32m",
     Reset: "\x1b[0m",
+    Dim: "\x1b[2m"
 }
 
 
 const config = {
-    startingCash: 1000,
-
     symbol: 'gme',
+
+    // tweak these knobs
+    startingCash: 10000,
     stashPercent: .5,
-    txFee: 10,
-    trailingStopLossPercent: -.05,
-    trailingGainPercent: .05,
+    txFee: 0,
+    trailingStopLossPercent: -.03,
+    trailingGainPercent: .07,
     buybackDelay: 5, // number of iterations to wait before buying back in if price rising
 };
 
@@ -169,6 +171,9 @@ const getMoney = (res: State, quote: Quote) => {
                 latestDate: now,
                 buybackCounter: res.buybackCounter + 1,
             }
+            console.log(NodeColors.Dim);
+            printRes(result);
+            console.log(NodeColors.Reset);
         }
     }
 
