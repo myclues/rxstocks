@@ -120,5 +120,14 @@ def save_pf_status():
         return Response("PS ERR", status=500)
 
 
+@app.route("/api/portfolio", methods=["get"])
+def get_portfolio_status():
+    data = PortfolioStatus.objects().order_by('datetime')
+    res = list(map(PortfolioStatusSerializer, list(data)))
+    return {
+        'data': res
+    }
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
