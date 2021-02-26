@@ -10,7 +10,7 @@ const config = {
     symbol: 'gme',
 
     // tweak these knobs
-    interval: 60,
+    interval: 60 * 5,
     startingCash: 10000,
     stashPercent: .5,
     txFee: 0,
@@ -69,12 +69,18 @@ const savePortfolioChange = (ps, tx) => logPortfolioChange(ps, tx);
     // @ts-ignore
     quotePoller
         .pipe(
-            filter((val: Quote) => !lastUpdate || dayjs(val.datetime).isAfter(lastUpdate)),
+            filter((val: Quote) => {
+                const allow = !lastUpdate || dayjs(val.datetime).isAfter(lastUpdate)
+                if (!allow) {
+                    console.log("No new data, skipping...");
+                }
+                return allow;
+            }),
             scan(getMoney(config, savePortfolioChange), initial),
         )
         .subscribe({
             next: (ev) => {
-                // console.log('EV', ev);
+                console.log('EV', ev);
                 lastUpdate = ev.latestDate;
             },
             error: err => console.error(err),

@@ -171,7 +171,7 @@ export const getMoney = (config, changeCallback) => (res: State, quote: Quote) =
 
     if (!!changeCallback && tx) {
         const ps = {
-            timestamp: result.latestDate.toDate(),
+            datetime: result.latestDate.toDate(),
             stash: result.stash,
             numShares: result.numShares,
             costAvg: result.costAvg,
