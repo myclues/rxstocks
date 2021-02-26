@@ -3,6 +3,8 @@ import { filter, scan } from 'rxjs/operators';
 
 import { State, getMoney } from './dumbProcessor';
 import { Quote, getQuote } from './quoteApi';
+import { logPortfolioChange } from './resultsApi';
+import * as dayjs from 'dayjs';
 
 const config = {
     symbol: 'gme',
@@ -17,6 +19,8 @@ const config = {
     buybackDelay: 5, // number of iterations to wait before buying back in if price rising
 };
 
+const savePortfolioChange = (ps, tx) => logPortfolioChange(ps, tx);
+
 (function main() {
     const initial: State = {
         latestDate: null,
@@ -28,6 +32,8 @@ const config = {
         isFalling: false,
         buybackCounter: config.buybackDelay, // start at max so we immediately buy in
     };
+
+    let lastUpdate;
 
     /**
     https://rxjs.dev/api/index/class/Observable
@@ -63,19 +69,14 @@ const config = {
     // @ts-ignore
     quotePoller
         .pipe(
-            // filter((val: Quote) => {
-            //     const dt = dayjs(val.datetime)
-            //     if (!initial.latestDate || dt.isAfter(initial.latestDate)) {
-            //         initial.latestDate = dt;
-            //         return true;
-            //     } else {
-            //         return false;
-            //     }
-            // }),
-            scan(getMoney(config), initial),
+            filter((val: Quote) => !lastUpdate || dayjs(val.datetime).isAfter(lastUpdate)),
+            scan(getMoney(config, savePortfolioChange), initial),
         )
         .subscribe({
-            next: (ev: Quote) => { },
+            next: (ev) => {
+                // console.log('EV', ev);
+                lastUpdate = ev.latestDate;
+            },
             error: err => console.error(err),
             complete: () => {
                 process.exit(0);

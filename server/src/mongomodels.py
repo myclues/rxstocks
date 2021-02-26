@@ -1,13 +1,5 @@
 from mongoengine import *
 
-connect(
-    alias='stocks',
-    db='stocks',
-    username='root',
-    password='pw',
-    authentication_source='admin',
-    host='mongodb://db',
-)
 
 class Quote(Document):
     symbol = StringField(max_length=10, required=True)

@@ -12,7 +12,7 @@ const NodeColors = {
     Dim: "\x1b[2m"
 }
 
-enum TxType {
+export enum TxType {
     Buy,
     Sell
 };
@@ -22,6 +22,7 @@ export interface Tx {
     price: number,
     numShares: number,
     txType: TxType,
+    symbol: string,
 };
 
 
@@ -55,7 +56,7 @@ const percent = number => Math.floor(number * 10000) / 100;
 const toDollars = number => Math.round(number * 100) / 100;
 
 
-export const getMoney = (config) => (res: State, quote: Quote) => {
+export const getMoney = (config, changeCallback) => (res: State, quote: Quote) => {
     if (res.currentCash <= 0 && res.numShares == 0) {
         console.log(`${NodeColors.Red} Bankrupt. WAMP WAMP`);
         process.exit(0);
@@ -65,6 +66,7 @@ export const getMoney = (config) => (res: State, quote: Quote) => {
 
     const now = dayjs(quote.datetime);
 
+    let tx;
 
     const isFalling = (quote.price < res.costAvg);
     let result = {
@@ -77,11 +79,12 @@ export const getMoney = (config) => (res: State, quote: Quote) => {
     const sharesToBuy = Math.floor((res.currentCash - config.txFee) / quote.price);
 
     if (result.buybackCounter >= config.buybackDelay && sharesToBuy >= 1) {
-        const tx = {
+        tx = {
             datetime: now,
             price: quote.price,
             numShares: sharesToBuy,
             txType: TxType.Buy,
+            symbol: quote.symbol,
         }
         const cost = tx.numShares * tx.price + config.txFee;
 
@@ -108,11 +111,12 @@ export const getMoney = (config) => (res: State, quote: Quote) => {
 
             const stashAmount = priceDiff * res.numShares * config.stashPercent;
 
-            const tx = {
+            tx = {
                 datetime: dayjs(),
                 price: quote.price,
                 numShares: res.numShares,
                 txType: TxType.Sell,
+                symbol: quote.symbol,
             };
 
             result = {
@@ -129,11 +133,12 @@ export const getMoney = (config) => (res: State, quote: Quote) => {
             printRes(result, config.startingCash);
         } else if (priceDiffPercent <= config.trailingStopLossPercent) {
             // sell and hedge
-            const tx = {
+            tx = {
                 datetime: dayjs(),
                 price: quote.price,
                 numShares: res.numShares,
                 txType: TxType.Sell,
+                symbol: quote.symbol,
             };
 
             const gain = res.numShares * quote.price - config.txFee;
@@ -164,5 +169,21 @@ export const getMoney = (config) => (res: State, quote: Quote) => {
         }
     }
 
+    if (!!changeCallback && tx) {
+        const ps = {
+            timestamp: result.latestDate.toDate(),
+            stash: result.stash,
+            numShares: result.numShares,
+            costAvg: result.costAvg,
+            currentCash: result.currentCash,
+        }
+        changeCallback(ps, tx)
+            .then(responses => {
+                console.log('Persisted portfolio change');
+            })
+            .catch(err => {
+                console.error('Error persisting portfolio change');
+            });
+    }
     return result;
 };

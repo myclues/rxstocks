@@ -43,7 +43,7 @@ const config = {
                         return false;
                     }
                 }),
-                scan(getMoney(config), initial),
+                scan(getMoney(config, () => { }), initial),
             )
             .subscribe({
                 next: next => {

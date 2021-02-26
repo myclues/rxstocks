@@ -4,12 +4,19 @@ from datetime import datetime
 import csv
 from io import TextIOWrapper
 
-
+from mongoengine import connect
 from pymongo.errors import *
 
 from mongomodels import *
 
-
+connect(
+    alias='stocks',
+    db='teststocks',
+    username='root',
+    password='pw',
+    authentication_source='admin',
+    host='mongodb://db',
+)
 
 
 def insert_quote(symbol, dt, price):

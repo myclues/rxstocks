@@ -4,7 +4,21 @@ from flask import (
 )
 import yfinance as yf
 import json
+
+from mongoengine import connect
+from pymongo.errors import *
+
 from mongomodels import *
+
+connect(
+    alias='stocks',
+    db='stocks',
+    username='root',
+    password='pw',
+    authentication_source='admin',
+    host='mongodb://db',
+)
+
 
 app = Flask("turkquotesy")
 
@@ -45,18 +59,20 @@ def quote(symbol):
     # print(data)
 
     # get latest entry
-    datetime = data.index[-1]
+    dt = data.index[-1]
     quote = data.tail(1)
 
-    # re-map data
-    res = {
-        "symbol": symbol.lower(),
-        "datetime": datetime.strftime("%Y/%m/%d %H:%M:%S"),
-        # for interval history, all price columns show same value
-        "price": quote["Close"].tolist()[0],
-    }
-    # for key in COLUMNS:
-    #     res[key.lower()] = quote[key].tolist()[0]
+    q = Quote(
+        symbol = symbol.lower(),
+        datetime = dt.to_pydatetime(),
+        price = quote["Close"].tolist()[0],
+    )
+    try:
+        q.save()
+    except (DuplicateKeyError, NotUniqueError) as e:
+        print("Trying to insert dupe")
+
+    res = QuoteSerializer(q)
 
     return res
 
