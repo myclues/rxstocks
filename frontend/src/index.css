@@ -1,0 +1,199 @@
+@font-face {
+    font-family: 'crimsontext';
+    src: url('fonts/crimson_text/CrimsonText-Regular.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'crimsontext';
+    src: url('fonts/crimson_text/CrimsonText-Bold.ttf') format('truetype');
+    font-weight: bold;
+}
+
+
+/* http://meyerweb.com/eric/tools/css/reset/
+v2.0 | 20110126
+License: none (public domain)
+ */
+
+* {
+    box-sizing: border-box;
+}
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+
+body {
+    line-height: 1;
+}
+
+ol, ul {
+    list-style: none;
+}
+
+blockquote, q {
+    quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+
+body {
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+    background: #cecece;
+    padding: 0 .25em;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+    font-size: .75em;
+}
+
+button {
+    cursor: pointer;
+}
+
+/**/
+/*START NEW STUFF*/
+/**/
+
+body {
+    font-family: 'crimsontext', 'helvetica', 'sans-serif';
+}
+
+.strong {
+    font-weight: 700;
+}
+.italic {
+    font-style: italic;
+}
+
+header.main-header {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    z-index: 100;
+}
+
+.header-grid {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    align-items: center;
+}
+
+.header-grid .logo-container {
+    grid-column: 1 / span 2;
+    grid-row: 1 / span 3;
+}
+
+.header-grid .logo-container img {
+    width: 100%;
+    padding: 1em;
+}
+
+.header-grid .nav-links {
+    grid-column: 3 / span 5;
+    background: #fff;
+    grid-row: 2;
+    border: 1px solid #000;
+    text-align: center;
+}
+.header-grid .nav-links ul {
+    overflow: hidden;
+    padding: .25em 0 .5em;
+}
+.header-grid .nav-links ul li {
+    display: inline-block;
+}
+.header-grid .nav-links ul li:last-child {
+    margin: 0;
+}
+
+.nav-links a {
+    color: #000;
+    text-decoration: none;
+    display: inline-block;
+    padding: .5em .5em;
+}
+.nav-links a.active {
+    box-shadow: 0 0 12px #000;
+}
+
+
+.header-underlay {
+    grid-column: 1;
+    grid-row: 1;
+    background: #000;
+    z-index: -1;
+}
+
+@media only screen and (max-width: 1023px) {
+}
+
+@media only screen and (min-width: 1024px) {
+    body {
+        font-size: 24px;
+    }
+    .header-grid {
+        width: 840px;
+        margin: 0 auto;
+    }
+    
+    .grid-2col {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .grid-2col > div {
+        margin-right: 1em;
+        padding-right: 1em;
+        border-right: 1px solid #cecece;
+    }
+    .grid-2col > div:last-child {
+        margin-right: 0;
+        padding-right: 0;
+        border-right: none;
+    }
+
+    .copy-page {
+        width: 840px;
+    }
+    .copy-page {
+        margin: -2em auto 2em;
+    }
+}

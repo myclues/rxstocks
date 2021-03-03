@@ -1,0 +1,84 @@
+.portfolio {
+    display: grid;
+    grid-template-columns: 70% 1fr;
+}
+h2 {
+    margin-bottom: 1em;
+    text-align: center;
+}
+
+.chartbox {
+    padding: 20px;
+    margin: 0 auto;
+}
+
+.ct-series-a .ct-line, .ct-series-a .ct-point {
+    stroke: black;
+    stroke-dasharray: 20px 10px;
+}
+
+.ct-series-b .ct-line, .ct-series-b .ct-point {
+    stroke: rgb(14, 95, 14);
+}
+.ct-series-b .ct-area {
+    fill: rgb(14, 95, 14);
+}
+
+.ct-series-c .ct-line, .ct-series-c .ct-point {
+    stroke: rgb(0, 199, 0);
+}
+
+
+
+.ct-series-d .ct-line, .ct-series-d .ct-point {
+    stroke: rgb(167, 9, 9);
+}
+
+.ct-series-e .ct-line, .ct-series-e .ct-point {
+    stroke: rgb(3, 0, 175);
+}
+
+.legend {
+    margin-top: 2em;
+}
+
+.legend p {
+    margin-bottom: 1em;
+}
+
+.line-color {
+    display: inline-block;
+    width: 30px;
+    height: 4px;
+    margin-right: .5em;
+    top: -.2em;
+}
+
+.dashed {
+    border-style: dashed;
+}
+
+.black {
+    background: #000;
+    border: 2px dashed #fff;
+}
+
+.bright-green {
+    background:rgb(0, 199, 0);
+}
+
+.blue {
+    background:rgb(3, 0, 175);
+}
+.red {
+    background: rgb(167, 9, 9);
+}
+
+.area-dark-green {
+    display: inline-block;
+    width: 30px;
+    height: .8em;
+    margin-right: .5em;
+    background: rgba(14, 95, 14, .1);
+    border-top: 4px solid rgba(14, 95, 14, 1.0);
+}
