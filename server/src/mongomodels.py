@@ -53,7 +53,7 @@ def PortfolioStatusSerializer(p):
     return {
         "datetime": p.datetime.isoformat(),
         "stash": float(p.stash),
-        "current_cash": float(p.current_cash),
-        "num_shares": p.num_shares,
-        "cost_avg": float(p.cost_avg),
+        "currentCash": float(p.current_cash),
+        "numShares": p.num_shares,
+        "costAvg": float(p.cost_avg),
     }
