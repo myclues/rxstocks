@@ -159,16 +159,19 @@ def get_batch_data():
         interval="1m",
     )
 
-    result = {}
+    result = []
     for symbol in symbols:
         d = data[symbol]
         latest = get_latest(d, "Close")
-        result[symbol.lower()] = {
+        result.append({
             "datetime": latest.name.strftime(target_date_format),
             "price": latest["Close"],
-        }
+            "symbol": symbol.lower(),
+        })
     
-    return result
+    return {
+        "data": result
+    }
 
 
 if __name__ == "__main__":
