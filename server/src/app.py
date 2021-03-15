@@ -6,6 +6,7 @@ from flask import (
 )
 import yfinance as yf
 import json
+import math
 from datetime import datetime
 
 from mongoengine import connect
@@ -36,6 +37,10 @@ COLUMNS = [
     "Volume",
 ]
 
+
+target_date_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+
+
 @app.route("/api/history/<symbol>", methods=['get'])
 def history(symbol):
     try:
@@ -62,13 +67,12 @@ def quote(symbol):
     # print(data)
 
     # get latest entry
-    dt = data.index[-1]
-    quote = data.tail(1)
+    latest = get_latest(data, "Close")
 
     q = Quote(
         symbol = symbol.lower(),
-        datetime = dt.to_pydatetime(),
-        price = quote["Close"].tolist()[0],
+        datetime = latest.name,
+        price = latest["Close"],
     )
     try:
         q.save()
@@ -86,7 +90,7 @@ def save_tx():
     try:
         tx = Transaction(
             symbol = txObj["symbol"],
-            datetime = datetime.strptime(txObj["datetime"], "%Y-%m-%dT%H:%M:%S.%fZ"),
+            datetime = datetime.strptime(txObj["datetime"], target_date_format),
             price = txObj["price"],
             num_shares = txObj["numShares"],
             tx_type = "buy" if txObj["txType"] == 0 else "sell",
@@ -105,7 +109,7 @@ def save_pf_status():
     psObj = json.loads(request.data)
     try:
         ps = PortfolioStatus(
-            datetime = datetime.strptime(psObj["datetime"], "%Y-%m-%dT%H:%M:%S.%fZ"),
+            datetime = datetime.strptime(psObj["datetime"], target_date_format),
             stash = psObj["stash"],
             current_cash = psObj["currentCash"],
             num_shares = psObj["numShares"],
@@ -127,6 +131,44 @@ def get_portfolio_status():
     return {
         'data': res
     }
+
+
+# get latest row w/ defined/non-NaN key
+# TODO: change this to finite loop
+def get_latest(df, key):
+    latest = None
+    lasti = -1
+    while latest is None:
+        next = df.iloc[lasti]
+        val = next[key]
+        if math.isnan(val) or val is None:
+            lasti -= 1
+        else:
+            latest = next
+    return latest
+
+
+@app.route("/api/fetchBatchData", methods=['post'])
+def get_batch_data():
+    input = json.loads(request.data)
+    symbols = input["symbols"]
+    data = yf.download(
+        tickers=" ".join(symbols).lower(),
+        group_by="ticker",
+        period="1d",
+        interval="1m",
+    )
+
+    result = {}
+    for symbol in symbols:
+        d = data[symbol]
+        latest = get_latest(d, "Close")
+        result[symbol.lower()] = {
+            "datetime": latest.name.strftime(target_date_format),
+            "price": latest["Close"],
+        }
+    
+    return result
 
 
 if __name__ == "__main__":
