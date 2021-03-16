@@ -10,6 +10,7 @@ import math
 from datetime import datetime
 
 from mongoengine import connect
+from mongoengine.errors import NotUniqueError
 from pymongo.errors import *
 
 from mongomodels import *
@@ -70,9 +71,9 @@ def quote(symbol):
     latest = get_latest(data, "Close")
 
     q = Quote(
-        symbol = symbol.lower(),
-        datetime = latest.name,
-        price = latest["Close"],
+        symbol=symbol.lower(),
+        datetime=latest.name,
+        price=latest["Close"],
     )
     try:
         q.save()
@@ -89,11 +90,11 @@ def save_tx():
     txObj = json.loads(request.data)
     try:
         tx = Transaction(
-            symbol = txObj["symbol"],
-            datetime = datetime.strptime(txObj["datetime"], target_date_format),
-            price = txObj["price"],
-            num_shares = txObj["numShares"],
-            tx_type = "buy" if txObj["txType"] == 0 else "sell",
+            symbol=txObj["symbol"],
+            datetime=datetime.strptime(txObj["datetime"], target_date_format),
+            price=txObj["price"],
+            num_shares=txObj["numShares"],
+            tx_type="buy" if txObj["txType"] == 0 else "sell",
         )
         tx.save()
         return Response("success", status=200)
@@ -109,11 +110,13 @@ def save_pf_status():
     psObj = json.loads(request.data)
     try:
         ps = PortfolioStatus(
-            datetime = datetime.strptime(psObj["datetime"], target_date_format),
-            stash = psObj["stash"],
-            current_cash = psObj["currentCash"],
-            num_shares = psObj["numShares"],
-            cost_avg = psObj["costAvg"],
+            datetime=datetime.strptime(psObj["datetime"], target_date_format),
+            stash=psObj["stash"],
+            current_cash=psObj["currentCash"],
+            num_shares=psObj["numShares"],
+            cost_avg=psObj["costAvg"],
+            gains=psObj["gains"],
+            losses=psObj["losses"],
         )
         ps.save()
         return Response("success", status=200)
@@ -168,7 +171,7 @@ def get_batch_data():
             "price": latest["Close"],
             "symbol": symbol.lower(),
         })
-    
+
     return {
         "data": result
     }

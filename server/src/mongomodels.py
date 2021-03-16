@@ -1,4 +1,10 @@
-from mongoengine import *
+from mongoengine import (
+    Document,
+    StringField,
+    DateTimeField,
+    DecimalField,
+    IntField,
+)
 
 
 class Quote(Document):
@@ -41,6 +47,8 @@ class PortfolioStatus(Document):
     current_cash = DecimalField()
     num_shares = IntField()
     cost_avg = DecimalField()
+    gains = DecimalField()
+    losses = DecimalField()
     
     meta = {
         'db_alias': 'stocks',
@@ -56,4 +64,6 @@ def PortfolioStatusSerializer(p):
         "currentCash": float(p.current_cash),
         "numShares": p.num_shares,
         "costAvg": float(p.cost_avg),
+        "gains": float(p.gains) if p.gains is not None else 0,
+        "losses": float(p.losses) if p.losses is not None else 0,
     }

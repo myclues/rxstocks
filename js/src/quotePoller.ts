@@ -31,6 +31,8 @@ const savePortfolioChange = (ps, tx) => logPortfolioChange(ps, tx);
         txHistory: [],
         isFalling: false,
         buybackCounter: config.buybackDelay, // start at max so we immediately buy in
+        gains: 0,
+        losses: 0,
     };
 
     let lastUpdate;

@@ -35,6 +35,8 @@ export interface State {
     txHistory: Tx[],
     isFalling: boolean,
     buybackCounter: number,
+    gains: number,
+    losses: number,
 };
 
 
@@ -128,6 +130,7 @@ export const getMoney = (config, changeCallback) => (res: State, quote: Quote) =
                 costAvg: 0,
                 txHistory: res.txHistory.concat([tx]),
                 buybackCounter: 0,
+                gains: res.gains + gain,
             }
             console.log(`--------------\n${NodeColors.Green}LOCK PROFITS!\t${toDollars(gain)}${NodeColors.Reset}`);
             printRes(result, config.startingCash);
@@ -151,6 +154,7 @@ export const getMoney = (config, changeCallback) => (res: State, quote: Quote) =
                 costAvg: 0,
                 txHistory: res.txHistory.concat([tx]),
                 buybackCounter: 0,
+                losses: res.losses + gain,
             }
             console.log(`--------------\n${NodeColors.Red}STOP LOSS! (${tx.numShares} x ${tx.price}) = $${toDollars(gain)} (${percent(priceDiffPercent)}%)${NodeColors.Reset}`);
             printRes(result, config.startingCash);
@@ -176,6 +180,8 @@ export const getMoney = (config, changeCallback) => (res: State, quote: Quote) =
             numShares: result.numShares,
             costAvg: result.costAvg,
             currentCash: result.currentCash,
+            gains: result.gains,
+            losses: result.losses,
         }
         changeCallback(ps, tx)
             .then(responses => {

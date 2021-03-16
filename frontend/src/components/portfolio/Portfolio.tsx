@@ -120,12 +120,20 @@ const TechComponent = () => {
                     options={chartOpts}
                 />
             </div>
-            <div className="legend">
-                <p><span className="line-color black dashed" /> starting value</p>
-                <p><span className="line-color bright-green" /> total portfolio value</p>
-                <p><span className="area-dark-green" /> stashed cash</p>
-                <p><span className="line-color blue" /> trading cash</p>
-                <p><span className="line-color red" /> stock value</p>
+            <div className="right-col">
+                <div className="legend">
+                    <p><span className="line-color black dashed" /> starting value</p>
+                    <p><span className="line-color bright-green" /> total portfolio value</p>
+                    <p><span className="area-dark-green" /> stashed cash</p>
+                    <p><span className="line-color blue" /> trading cash</p>
+                    <p><span className="line-color red" /> stock value</p>
+                </div>
+                <div className="summary">
+                    <h2>Summary</h2>
+                    <p>Portfolio value start: </p>
+                    <p>Portfolio value end: </p>
+                    <p>Net gains: </p>
+                </div>
             </div>
         </div>
     );
