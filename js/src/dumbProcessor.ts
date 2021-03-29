@@ -100,7 +100,7 @@ export const getMoney = (config, changeCallback) => (res: State, quote: Quote) =
         }
 
         console.log(`--------------\n${NodeColors.Cyan}BUYING! (${tx.numShares} x ${tx.price}) = $${toDollars(cost)}\tremaining cash: $${result.currentCash} ${NodeColors.Reset}`);
-        // printRes(result, config.startingCash);
+        printRes(result, config.startingCash);
     } else {
 
         const priceDiff = quote.price - res.costAvg;
@@ -133,7 +133,7 @@ export const getMoney = (config, changeCallback) => (res: State, quote: Quote) =
                 gains: res.gains + gain,
             }
             console.log(`--------------\n${NodeColors.Green}LOCK PROFITS!\t${toDollars(gain)}${NodeColors.Reset}`);
-            // printRes(result, config.startingCash);
+            printRes(result, config.startingCash);
         } else if (priceDiffPercent <= config.trailingStopLossPercent) {
             // sell and hedge
             tx = {
@@ -157,7 +157,7 @@ export const getMoney = (config, changeCallback) => (res: State, quote: Quote) =
                 losses: res.losses + gain,
             }
             console.log(`--------------\n${NodeColors.Red}STOP LOSS! (${tx.numShares} x ${tx.price}) = $${toDollars(gain)} (${percent(priceDiffPercent)}%)${NodeColors.Reset}`);
-            // printRes(result, config.startingCash);
+            printRes(result, config.startingCash);
         } else {
             if (res.buybackCounter < config.buybackDelay && res.txHistory.length) {
                 console.log(`Waiting ${config.buybackDelay - res.buybackCounter} more iterations before buying back in`);
@@ -168,7 +168,7 @@ export const getMoney = (config, changeCallback) => (res: State, quote: Quote) =
                 buybackCounter: res.buybackCounter + 1,
             }
             console.log(NodeColors.Dim);
-            // printRes(result, config.startingCash);
+            printRes(result, config.startingCash);
             console.log(NodeColors.Reset);
         }
     }

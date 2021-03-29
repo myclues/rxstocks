@@ -54,6 +54,7 @@ const savePortfolioChange = (ps, tx) => logPortfolioChange(ps, tx);
             timeout = setTimeout(
                 () => {
                     getQuote(config.symbol).then((data) => {
+                        console.log('quotedata', data);
                         sub.next(data);
                         fetchNextData();
                     });
@@ -64,6 +65,7 @@ const savePortfolioChange = (ps, tx) => logPortfolioChange(ps, tx);
         };
 
         getQuote(config.symbol).then((data) => {
+            console.log('quotedata', data);
             sub.next(data);
             fetchNextData();
         });
@@ -92,7 +94,7 @@ const savePortfolioChange = (ps, tx) => logPortfolioChange(ps, tx);
                 )
                 .subscribe({
                     next: (ev) => {
-                        printRes(ev, initial.currentCash);
+                        // printRes(ev, initial.currentCash);
                         lastUpdate = ev.latestDate;
                     },
                     error: err => console.error(err),
