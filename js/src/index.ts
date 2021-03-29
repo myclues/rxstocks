@@ -1,6 +1,6 @@
 import { from } from 'rxjs';
 import { filter, scan } from 'rxjs/operators';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 
 import { Quote, getHistory } from './quoteApi';
 import { State, getMoney } from './dumbProcessor';

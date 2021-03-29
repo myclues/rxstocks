@@ -8,6 +8,8 @@ export interface PortfolioStatus {
     currentCash: number,
     numShares: number,
     costAvg: number,
+    gains: number,
+    losses: number,
 }
 
 

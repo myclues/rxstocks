@@ -1,10 +1,11 @@
 import { Observable } from 'rxjs';
 import { filter, scan } from 'rxjs/operators';
 
-import { State, getMoney } from './dumbProcessor';
+import { State, getMoney, printRes } from './dumbProcessor';
 import { Quote, getQuote } from './quoteApi';
 import { logPortfolioChange } from './resultsApi';
-import * as dayjs from 'dayjs';
+import { fetchPortfolioStatuses } from './portfolioApi';
+import dayjs from 'dayjs';
 
 const config = {
     symbol: 'gme',
@@ -22,7 +23,7 @@ const config = {
 const savePortfolioChange = (ps, tx) => logPortfolioChange(ps, tx);
 
 (function main() {
-    const initial: State = {
+    const defaultState: State = {
         latestDate: null,
         stash: 0,
         numShares: 0,
@@ -68,28 +69,42 @@ const savePortfolioChange = (ps, tx) => logPortfolioChange(ps, tx);
         });
     });
 
-    // @ts-ignore
-    quotePoller
-        .pipe(
-            filter((val: Quote) => {
-                const allow = !lastUpdate || dayjs(val.datetime).isAfter(lastUpdate)
-                if (!allow) {
-                    console.log("No new data, skipping...");
-                }
-                return allow;
-            }),
-            scan(getMoney(config, savePortfolioChange), initial),
-        )
-        .subscribe({
-            next: (ev) => {
-                console.log('EV', ev);
-                lastUpdate = ev.latestDate;
-            },
-            error: err => console.error(err),
-            complete: () => {
-                process.exit(0);
-            }
+    fetchPortfolioStatuses()
+        .then(statuses => {
+            const initial = {
+                ...defaultState,
+                ...statuses[0],
+            };
+
+            console.log('Starting with portfolio...', initial);
+
+            // @ts-ignore
+            quotePoller
+                .pipe(
+                    filter((val: Quote) => {
+                        const allow = !lastUpdate || dayjs(val.datetime).isAfter(lastUpdate)
+                        if (!allow) {
+                            console.log("No new data, skipping...");
+                        }
+                        return allow;
+                    }),
+                    scan(getMoney(config, savePortfolioChange), initial),
+                )
+                .subscribe({
+                    next: (ev) => {
+                        printRes(ev, initial.currentCash);
+                        lastUpdate = ev.latestDate;
+                    },
+                    error: err => console.error(err),
+                    complete: () => {
+                        process.exit(0);
+                    }
+                });
+
+            console.log(`Polling ${config.symbol} every ${config.interval} seconds...`);
+        })
+        .catch(err => {
+            console.error('Could not fetch initial status. Exiting...', err);
         });
 
-    console.log(`Polling ${config.symbol} every ${config.interval} seconds...`);
 })();
