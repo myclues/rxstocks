@@ -21,6 +21,23 @@ const initialState = {
     statuses: [],
 }
 
+const latestStatus = (statuses: PortfolioStatus[]) => {
+    return _.chain(statuses)
+        .orderBy(s => s.datetime, ['desc'])
+        .head()
+        .value();
+};
+
+const portfolioValue = (ps: PortfolioStatus) => {
+    return ps.currentCash + ps.stash + (ps.numShares * ps.costAvg);
+};
+
+const netGainLoss = (starting: number, ps: PortfolioStatus) => {
+    return portfolioValue(ps) - starting;
+};
+
+const toDollars = (number: number) => Math.round(number * 100) / 100;
+
 const TechComponent = () => {
     let [state, setState] = useState<PortfolioState>(initialState);
 
@@ -78,8 +95,9 @@ const TechComponent = () => {
             },
             'stocks': {
                 lineSmooth: Chartist.Interpolation.step(),
-                showLine: false,
+                showLine: true,
                 showPoint: false,
+                showArea: true,
             },
         }
     };
@@ -109,7 +127,6 @@ const TechComponent = () => {
         ],
     }
 
-
     return (
         <div className="portfolio">
             <div className="chartbox">
@@ -128,12 +145,14 @@ const TechComponent = () => {
                     <p><span className="line-color blue" /> trading cash</p>
                     <p><span className="line-color red" /> stock value</p>
                 </div>
-                <div className="summary">
-                    <h2>Summary</h2>
-                    <p>Portfolio value start: </p>
-                    <p>Portfolio value end: </p>
-                    <p>Net gains: </p>
-                </div>
+                {state.statuses.length && (
+                    <div className="summary">
+                        <h2>Summary</h2>
+                        <p>Portfolio value start: <span className="strong">$10000</span></p>
+                        <p>Portfolio value end: <span className="strong">${toDollars(portfolioValue(latestStatus(state.statuses)))}</span></p>
+                        <p>Net gains: <span className="strong">${toDollars(netGainLoss(10000, latestStatus(state.statuses)))}</span></p>
+                    </div>
+                )}
             </div>
         </div>
     );
