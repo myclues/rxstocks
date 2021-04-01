@@ -2,6 +2,8 @@
 
 This is a really rudimentary auto-trading bot to test out trading strategies, especially on high-volatility ~~stonks~~ stocks like GME.  It's just a pet project to practice/learn RxJs, and look into Pandas a tiny bit.
 
+The general strategy is to trade for incremental gains, and controlled losses so the overall portfolio grows slowly.  Every time there is an immediate gain (not over entire portfolio lifetime), a portion of the profit is "stashed" away.
+
 Some parameters in this bot are configurable:
 
 ```
@@ -23,9 +25,12 @@ The logic behind the bot follows a few basic rules:
 * Compare the current share price to our current cost average
    * If the difference is > `trailingGainPercent`, sell and lock some profits
    * If the difference is < `trailingStopLossPercent`, sell and stem the losses
-* If a sale occurs, wait `buybackDelay` iterations before buying back in 
+* If a sale occurs, wait `buybackDelay` iterations before buying back in
+
+![Frontend screenshot](https://raw.githubusercontent.com/myclues/myclues/main/images/rxstocks/rxstocks-ss.png)
 
 
+> This bot currently only works on a single stock symbol.  Switching symbols or restarting a new run needs a DB flush
 
 ## Setup
 
@@ -47,6 +52,7 @@ The logic behind the bot follows a few basic rules:
 
 ## Components
 
+1. MongoDB to store stock quotes, transactions, and portfolio states
 1. Backend Python server, port 5000
 1. Background JS poller that calls out to the Python server
 1. Frontend graph react app, port 3000
