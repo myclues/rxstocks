@@ -12,7 +12,7 @@ apps:
       NODE_PATH: frontend/src
 
   - script: yarn
-    args: ["run", "poller"]
+    args: "start"
     cwd: "js"
     name: RxStocks poller
     instances: 1
