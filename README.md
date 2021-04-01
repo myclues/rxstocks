@@ -1,6 +1,31 @@
 # RxStocks
 
-This is a really rudimentary auto-trading bot to test out trading strategies, especially on high-volatility ~~stonks~~ stocks like GME.
+This is a really rudimentary auto-trading bot to test out trading strategies, especially on high-volatility ~~stonks~~ stocks like GME.  It's just a pet project to practice/learn RxJs, and look into Pandas a tiny bit.
+
+Some parameters in this bot are configurable:
+
+```
+## DEFAULT VALUES
+symbol: 'gme',
+interval: 60 * 5, // seconds
+startingCash: 10000,
+stashPercent: .5, // what fraction of gains to stash away
+txFee: 0,
+trailingStopLossPercent: -.03, // not actually a trailing stop loss limit, poorly named
+trailingGainPercent: .07, // not actually a trailing gain limit, also poorly named
+buybackDelay: 5, // number of iterations to wait before buying back in if price rising
+```
+
+The logic behind the bot follows a few basic rules:
+
+* Query the latest stock price on an `interval`
+* If we can afford shares, buy as many as possible.  No partial shares yet.
+* Compare the current share price to our current cost average
+   * If the difference is > `trailingGainPercent`, sell and lock some profits
+   * If the difference is < `trailingStopLossPercent`, sell and stem the losses
+* If a sale occurs, wait `buybackDelay` iterations before buying back in 
+
+
 
 ## Setup
 
