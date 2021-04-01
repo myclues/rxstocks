@@ -1,0 +1,12 @@
+apps:
+  - script: yarn
+    args: "start"
+    cwd: "frontend"
+    name: RxStocks frontend
+    instances: 1
+    listen_timeout: 300000
+    restart_delay: 30000
+    max_restarts: 10
+
+    env:
+      NODE_PATH: src
