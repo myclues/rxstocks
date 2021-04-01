@@ -43,3 +43,10 @@ The logic behind the bot follows a few basic rules:
 ### Live dev server
 1. In `/js`, run `yarn run poller` to start the node application
 1. In `/frontend`, run `yarn start`, which will boot up on port 3000
+
+
+## Components
+
+1. Backend Python server, port 5000
+1. Background JS poller that calls out to the Python server
+1. Frontend graph react app, port 3000
