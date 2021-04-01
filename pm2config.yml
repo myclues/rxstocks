@@ -9,4 +9,16 @@ apps:
     max_restarts: 10
 
     env:
-      NODE_PATH: src
+      NODE_PATH: frontend/src
+
+  - script: yarn
+    args: ["run", "poller"]
+    cwd: "js"
+    name: RxStocks poller
+    instances: 1
+    listen_timeout: 300000
+    restart_delay: 30000
+    max_restarts: 10
+
+    env:
+      NODE_PATH: js/src
