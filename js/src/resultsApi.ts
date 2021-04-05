@@ -34,5 +34,8 @@ export const logPortfolioChange = (ps: PortfolioStatus, tx: Tx) => {
 
     const logPs = axios.post(`${host}/api/portfolio/addStatus`, ps);
 
-    return Promise.all([logTx, logPs]);
+    return Promise.all([logTx, logPs])
+        .catch(errs => {
+            console.error('Error saving portfolio status', errs);
+        });
 }

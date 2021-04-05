@@ -24,4 +24,7 @@ export const fetchPortfolioStatuses = () => axios.get(`${host}/api/portfolio`)
             }
         })
         .orderBy(s => s.datetime.toDate(), ['desc'])
-        .value());
+        .value())
+    .catch(err => {
+        console.error('Error fetching portfolio status', err);
+    });
