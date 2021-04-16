@@ -9,7 +9,6 @@ from flask import (
     Flask,
     jsonify,
     request,
-    Response,
 )
 import yfinance as yf
 
@@ -102,12 +101,12 @@ def save_tx():
             tx_type="buy" if txObj["txType"] == 0 else "sell",
         )
         tx.save()
-        return Response("success", status=200)
+        return "success", 200
     except (DuplicateKeyError, NotUniqueError):
-        return Response("success", status=200)
+        return "success", 200
     except Exception as e:
         print(f"TX ERR: {e}")
-        return Response("TX ERR", status=500)
+        return "TX ERR", 500
 
 
 @app.route("/api/portfolio/addStatus", methods=['post'])
@@ -124,12 +123,12 @@ def save_pf_status():
             losses=psObj["losses"],
         )
         ps.save()
-        return Response("success", status=200)
+        return "success", 200
     except (DuplicateKeyError, NotUniqueError):
-        return Response("success", status=200)
+        return "success", 200
     except Exception as e:
         print(f"PS ERR: {e}")
-        return Response("PS ERR", status=500)
+        return "PS ERR", 500
 
 
 @app.route("/api/portfolio", methods=["get"])

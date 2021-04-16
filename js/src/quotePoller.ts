@@ -55,7 +55,9 @@ const savePortfolioChange = (ps, tx) => logPortfolioChange(ps, tx);
                 () => {
                     getCryptoQuote(config.symbol).then((data) => {
                         console.log('quotedata', data);
-                        sub.next(data);
+                        if (!!data) {
+                            sub.next(data);
+                        }
                         fetchNextData();
                     });
                 },
@@ -66,7 +68,9 @@ const savePortfolioChange = (ps, tx) => logPortfolioChange(ps, tx);
 
         getCryptoQuote(config.symbol).then((data) => {
             console.log('quotedata', data);
-            sub.next(data);
+            if (!!data) {
+                sub.next(data);
+            }
             fetchNextData();
         });
     });
