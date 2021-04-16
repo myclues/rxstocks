@@ -6,5 +6,5 @@ WORKDIR /code
 COPY requirements.txt .
 
 RUN apt update && \
-    apt install -y gcc libpq-dev make && \
+    apt install -y gcc libpq-dev make git && \
     pip install -r requirements.txt
