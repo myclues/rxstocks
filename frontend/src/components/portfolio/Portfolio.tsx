@@ -36,7 +36,7 @@ const netGainLoss = (starting: number, ps: PortfolioStatus) => {
     return portfolioValue(ps) - starting;
 };
 
-const toDollars = (number: number) => Math.round(number * 100) / 100;
+const toDollars = (number: number) => Math.round(number * 1000000) / 1000000;
 
 const TechComponent = () => {
     let [state, setState] = useState<PortfolioState>(initialState);
@@ -130,7 +130,7 @@ const TechComponent = () => {
     return (
         <div className="portfolio">
             <div className="chartbox">
-                <h2>GME</h2>
+                <h2>DOGE (xdgusd)</h2>
                 <ChartistGraph type='Line'
                     data={chartData}
                     // @ts-ignore

@@ -20,3 +20,9 @@ export const getHistory = (symbol): Promise<Quote[]> => axios.get(`${host}/api/h
     .catch(err => {
         console.error(`Error fetching history ${symbol}\t\t`, err);
     });
+
+export const getCryptoQuote = (symbol): Promise<Quote> => axios.get(`${host}/api/crypto/fetch/${symbol}`)
+    .then(resp => resp.data)
+    .catch(err => {
+        console.error(`ERROR FETCHING ${symbol}\t\t`, err);
+    });

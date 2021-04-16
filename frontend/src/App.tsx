@@ -17,8 +17,8 @@ function App() {
             <div className="app">
                 <BearwaveHeader />
                 <Switch>
-                    <Route exact path="/gme"><Portfolio /></Route>
-                    <Redirect to="/gme" />
+                    <Route exact path="/doge"><Portfolio /></Route>
+                    <Redirect to="/doge" />
                 </Switch>
             </div>
         </Router>

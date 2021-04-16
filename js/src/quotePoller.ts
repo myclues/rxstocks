@@ -2,13 +2,13 @@ import { Observable } from 'rxjs';
 import { filter, scan } from 'rxjs/operators';
 
 import { State, getMoney, printRes } from './dumbProcessor';
-import { Quote, getQuote } from './quoteApi';
+import { Quote, getCryptoQuote } from './quoteApi';
 import { logPortfolioChange } from './resultsApi';
 import { fetchPortfolioStatuses } from './portfolioApi';
 import dayjs from 'dayjs';
 
 const config = {
-    symbol: 'gme',
+    symbol: 'xdgusd',
 
     // tweak these knobs
     interval: 60 * 5,
@@ -53,7 +53,7 @@ const savePortfolioChange = (ps, tx) => logPortfolioChange(ps, tx);
         const fetchNextData = () => {
             timeout = setTimeout(
                 () => {
-                    getQuote(config.symbol).then((data) => {
+                    getCryptoQuote(config.symbol).then((data) => {
                         console.log('quotedata', data);
                         sub.next(data);
                         fetchNextData();
@@ -64,7 +64,7 @@ const savePortfolioChange = (ps, tx) => logPortfolioChange(ps, tx);
             return () => clearTimeout(timeout);
         };
 
-        getQuote(config.symbol).then((data) => {
+        getCryptoQuote(config.symbol).then((data) => {
             console.log('quotedata', data);
             sub.next(data);
             fetchNextData();

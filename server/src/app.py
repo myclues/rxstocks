@@ -1,3 +1,10 @@
+from mongomodels import *
+from pymongo.errors import *
+from mongoengine.errors import NotUniqueError
+from mongoengine import connect
+from datetime import datetime
+import math
+import json
 from flask import (
     Flask,
     jsonify,
@@ -5,19 +12,17 @@ from flask import (
     Response,
 )
 import yfinance as yf
-import json
-import math
-from datetime import datetime
 
-from mongoengine import connect
-from mongoengine.errors import NotUniqueError
-from pymongo.errors import *
+import krakenex
+from pykrakenapi import KrakenAPI
 
-from mongomodels import *
+krakapi = krakenex.API()
+kraken = KrakenAPI(krakapi)
+
 
 connect(
-    alias='stocks',
-    db='stocks',
+    alias='crypto',
+    db='crypto',
     username='root',
     password='pw',
     authentication_source='admin',
@@ -175,6 +180,29 @@ def get_batch_data():
     return {
         "data": result
     }
+
+
+# https://github.com/dominiktraxl/pykrakenapi
+@app.route("/api/crypto/fetch/<symbol>", methods=["get"])
+def get_crypto_quote(symbol):
+    data, last = kraken.get_ohlc_data(symbol)
+
+    # get latest entry - this API is in reverse chrono thank god...
+    latest = data.iloc[0]
+
+    q = Quote(
+        symbol=symbol.lower(),
+        datetime=latest.name,
+        price=latest["close"],
+    )
+    try:
+        q.save()
+    except (DuplicateKeyError, NotUniqueError) as e:
+        print("Trying to insert dupe")
+
+    res = QuoteSerializer(q)
+
+    return res
 
 
 if __name__ == "__main__":

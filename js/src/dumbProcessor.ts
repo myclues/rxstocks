@@ -93,7 +93,7 @@ export const getMoney = (config, changeCallback) => (res: State, quote: Quote) =
         result = {
             ...res,
             latestDate: now,
-            costAvg: toDollars(((res.numShares * res.costAvg) + (tx.numShares * tx.price)) / (res.numShares + tx.numShares)),
+            costAvg: ((res.numShares * res.costAvg) + (tx.numShares * tx.price)) / (res.numShares + tx.numShares),
             currentCash: toDollars(res.currentCash - cost),
             numShares: res.numShares + tx.numShares,
             txHistory: res.txHistory.concat([tx])

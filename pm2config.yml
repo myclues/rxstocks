@@ -11,8 +11,7 @@ apps:
     env:
       NODE_PATH: frontend/src
 
-  - script: yarn
-    args: "start"
+  - script: "build/quotePoller.js"
     cwd: "js"
     name: RxStocks poller
     instances: 1

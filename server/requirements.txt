@@ -1,5 +1,6 @@
 flask
 mongoengine
 pandas
+pykrakenapi
 rx
 yfinance
