@@ -1,3 +1,7 @@
+import os
+import json
+
+from mongoengine import connect
 from mongoengine import (
     Document,
     StringField,
@@ -7,13 +11,32 @@ from mongoengine import (
 )
 
 
+config = {
+    "db_user": os.getenv("MONGO_INITDB_ROOT_USERNAME"),
+    "db_pw": os.getenv("MONGO_INITDB_ROOT_PASSWORD"),
+    "db_name": os.getenv("DB_NAME"),
+    "db_alias": os.getenv("DB_ALIAS"),
+}
+
+print(config)
+
+connect(
+    alias=config["db_alias"],
+    db=config["db_name"],
+    username=config["db_user"],
+    password=config["db_pw"],
+    authentication_source='admin',
+    host='mongodb://db',
+)
+
+
 class Quote(Document):
     symbol = StringField(max_length=10, required=True)
     datetime = DateTimeField(required=True, unique_with=['symbol'])
     price = FloatField(required=True)  # Close price
 
     meta = {
-        'db_alias': 'crypto',
+        'db_alias': config["db_alias"],
         'indexes': [
             'datetime'
         ]
@@ -36,7 +59,7 @@ class Transaction(Document):
     tx_type = StringField(max_length=10)
 
     meta = {
-        'db_alias': 'crypto',
+        'db_alias': config["db_alias"],
         'indexes': [
             'datetime'
         ]
@@ -53,7 +76,7 @@ class PortfolioStatus(Document):
     losses = FloatField()
 
     meta = {
-        'db_alias': 'crypto',
+        'db_alias': config["db_alias"],
         'indexes': [
             'datetime'
         ]

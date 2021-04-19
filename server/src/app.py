@@ -1,7 +1,6 @@
 from mongomodels import *
 from pymongo.errors import *
 from mongoengine.errors import NotUniqueError
-from mongoengine import connect
 from datetime import datetime
 import math
 import json
@@ -17,16 +16,6 @@ from pykrakenapi import KrakenAPI
 
 krakapi = krakenex.API()
 kraken = KrakenAPI(krakapi)
-
-
-connect(
-    alias='crypto',
-    db='crypto',
-    username='root',
-    password='pw',
-    authentication_source='admin',
-    host='mongodb://db',
-)
 
 
 app = Flask("turkquotesy")
