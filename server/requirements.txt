@@ -1,6 +1,6 @@
 flask
 mongoengine
 pandas
-git+https://git@github.com/myclues/pykrakenapi-20210416.git
+git+https://git@github.com/myclues/pykrakenapi-20210416.git@master
 rx
 yfinance
