@@ -59,6 +59,8 @@ const savePortfolioChange = (ps, tx) => logPortfolioChange(ps, tx);
                             sub.next(data);
                         }
                         fetchNextData();
+                    }).catch((e) => {
+                        console.log('error fetching quote');
                     });
                 },
                 config.interval * 1001,
@@ -72,6 +74,8 @@ const savePortfolioChange = (ps, tx) => logPortfolioChange(ps, tx);
                 sub.next(data);
             }
             fetchNextData();
+        }).catch((e) => {
+            console.log('error fetching quote');
         });
     });
 
