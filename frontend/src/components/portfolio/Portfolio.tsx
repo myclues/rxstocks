@@ -8,6 +8,7 @@ import 'chartist/dist/chartist.min.css';
 import './portfolio.css';
 
 import { PortfolioStatus, Quote, fetchPortfolioStatuses, fetchQuoteHistory } from './portfolioApi';
+import dayjs from 'dayjs';
 
 interface PortfolioState {
     loading: boolean,
@@ -39,6 +40,8 @@ const netGainLoss = (starting: number, ps: PortfolioStatus) => {
 };
 
 const toDollars = (number: number) => Math.round(number * 1000000) / 1000000;
+
+const formatDate = (d: dayjs.Dayjs) => d.format('MMM D, HH:mm');
 
 const TechComponent = () => {
     let [state, setState] = useState<PortfolioState>(initialState);
@@ -159,7 +162,11 @@ const TechComponent = () => {
     return (
         <div className="portfolio">
             <div className="chartbox">
-                <h2>DOGE (xdgusd)</h2>
+                <h2>DOGE (xdgusd)
+                    {state.quoteHistory.length && (
+                        <span>{formatDate(state.quoteHistory[0].datetime)} - {formatDate(state.quoteHistory[state.quoteHistory.length - 1].datetime)}</span>
+                    )}
+                </h2>
                 <ChartistGraph type='Line'
                     data={chartData}
                     // @ts-ignore

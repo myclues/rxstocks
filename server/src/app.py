@@ -38,10 +38,11 @@ target_date_format = "%Y-%m-%dT%H:%M:%S.%fZ"
 @app.route("/api/history/<symbol>", methods=['get'])
 def history(symbol):
     try:
-        data = Quote.objects(symbol__iexact=symbol).order_by('datetime')
+        data = Quote.objects(symbol__iexact=symbol).order_by(
+            '-datetime').limit(48)  # last 4 hours
         res = list(map(QuoteSerializer, list(data)))
         return {
-            'data': res
+            'data': res[::-1]  # reverse the order back to ascending by date
         }
     except Exception as e:
         print(e)
