@@ -38,6 +38,10 @@ h2 {
     stroke: rgb(3, 0, 175);
 }
 
+.ct-series-f .ct-line, .ct-series-f .ct-point {
+    stroke: rgb(221, 207, 13);
+}
+
 .legend {
     margin-top: 2em;
 }
@@ -72,6 +76,9 @@ h2 {
 }
 .red {
     background: rgb(167, 9, 9);
+}
+.yellow {
+    background: rgb(221, 207, 13);;
 }
 
 .area-dark-green {

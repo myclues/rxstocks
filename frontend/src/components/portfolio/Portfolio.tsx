@@ -1,24 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
+import Q from 'q';
 import * as Chartist from 'chartist';
 import ChartistGraph from 'react-chartist';
 
 import 'chartist/dist/chartist.min.css';
 import './portfolio.css';
 
-import { PortfolioStatus, fetchPortfolioStatuses } from './portfolioApi';
+import { PortfolioStatus, Quote, fetchPortfolioStatuses, fetchQuoteHistory } from './portfolioApi';
 
 interface PortfolioState {
     loading: boolean,
     loaded: boolean,
     statuses: PortfolioStatus[],
-
+    quoteHistory: Quote[],
 }
 
 const initialState = {
     loading: false,
     loaded: false,
     statuses: [],
+    quoteHistory: [],
 }
 
 const latestStatus = (statuses: PortfolioStatus[]) => {
@@ -50,14 +52,20 @@ const TechComponent = () => {
                     loaded: false,
                 })
 
-                fetchPortfolioStatuses()
-                    .then(statuses => {
+                Q.all([
+                    fetchQuoteHistory('xdgusd'),
+                    fetchPortfolioStatuses(),
+                ])
+                    .then(results => {
+                        const [quoteHistory, statuses] = results;
+                        console.log('history', quoteHistory);
                         console.log('statuses', statuses);
                         setState({
                             ...state,
                             loading: false,
                             loaded: true,
                             statuses,
+                            quoteHistory,
                         })
                     })
                     .catch(err => {
@@ -84,9 +92,10 @@ const TechComponent = () => {
             },
             'stash': {
                 showArea: true,
+                showPoint: false,
             },
             'total': {
-
+                showPoint: false,
             },
             'cash': {
                 lineSmooth: Chartist.Interpolation.step(),
@@ -99,30 +108,50 @@ const TechComponent = () => {
                 showPoint: false,
                 showArea: true,
             },
+            'price': {
+                showLine: false,
+                showPoint: true,
+            }
         }
     };
 
     const chartData = {
-        labels: _.map(state.statuses, s => s.datetime.format('ddd HH:mm')),
+        labels: _.map(state.quoteHistory, q => q.datetime.format('HH:mm')),
         series: [
             {
                 name: 'starting',
-                data: _.range(0, state.statuses.length).map(i => (10000)),
+                data: _.range(0, state.quoteHistory.length).map(i => (10000)),
             },
             {
                 name: 'stash',
-                data: _.map(state.statuses, s => s.stash)
+                data: _.map(state.quoteHistory, q => {
+                    const status = _.find(state.statuses, s => q.datetime.diff(s.datetime, 's') <= 30);
+                    return status ? status.stash : null;
+                }),
             }, {
                 name: 'total',
-                data: _.map(state.statuses, s => (s.stash + s.currentCash + (s.numShares * s.costAvg)))
+                data: _.map(state.quoteHistory, q => {
+                    const status = _.find(state.statuses, s => q.datetime.diff(s.datetime, 's') <= 30);
+                    return status ? (status.stash + status.currentCash + (status.numShares * q.price)) : null;
+                }),
             },
             {
                 name: 'stocks',
-                data: _.map(state.statuses, s => (s.numShares * s.costAvg))
+                data: _.map(state.quoteHistory, q => {
+                    const status = _.find(state.statuses, s => q.datetime.diff(s.datetime, 's') <= 30);
+                    return status ? (status.numShares * q.price) : null;
+                }),
             },
             {
                 name: 'cash',
-                data: _.map(state.statuses, s => s.currentCash)
+                data: _.map(state.quoteHistory, q => {
+                    const status = _.find(state.statuses, s => q.datetime.diff(s.datetime, 's') <= 30);
+                    return status ? status.currentCash : null;
+                }),
+            },
+            {
+                name: 'price',
+                data: _.map(state.quoteHistory, h => h.price * 10000)
             },
         ],
     }
@@ -144,13 +173,15 @@ const TechComponent = () => {
                     <p><span className="area-dark-green" /> stashed cash</p>
                     <p><span className="line-color blue" /> trading cash</p>
                     <p><span className="line-color red" /> stock value</p>
+                    <p><span className="line-color yellow" /> stock price</p>
                 </div>
                 {state.statuses.length && (
                     <div className="summary">
                         <h2>Summary</h2>
                         <p>Portfolio value start: <span className="strong">$10000</span></p>
                         <p>Portfolio value end: <span className="strong">${toDollars(portfolioValue(latestStatus(state.statuses)))}</span></p>
-                        <p>Net gains: <span className="strong">${toDollars(netGainLoss(10000, latestStatus(state.statuses)))}</span></p>
+                        <p>Net gains: <span className="strong">${toDollars(netGainLoss(10000, latestStatus(state.statuses)))} ({(Math.round(toDollars(netGainLoss(10000, latestStatus(state.statuses))) * 100) / 10000)}%)</span></p>
+                        <p>Stash: <span className="strong">${toDollars(latestStatus(state.statuses).stash)}</span></p>
                     </div>
                 )}
             </div>

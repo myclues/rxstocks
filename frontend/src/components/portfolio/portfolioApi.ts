@@ -18,6 +18,25 @@ export const fetchPortfolioStatuses = () => axios.get('/api/portfolio')
     .then(res => _.map(res.data, s => {
         return {
             ...s,
-            datetime: dayjs(s.datetime),
+            datetime: dayjs(s.datetime).subtract(4, 'h'),
         }
     }));
+
+
+export interface Quote {
+    datetime: dayjs.Dayjs,
+    symbol: string,
+    price: number,
+}
+
+
+export const fetchQuoteHistory = (symbol: string) => axios.get(`/api/history/${symbol}`)
+    .then(resp => resp.data)
+    .then(res => {
+        return _.map(res.data, q => {
+            return {
+                ...q,
+                datetime: dayjs(q.datetime),
+            };
+        });
+    });
