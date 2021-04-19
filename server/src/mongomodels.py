@@ -18,8 +18,6 @@ config = {
     "db_alias": os.getenv("DB_ALIAS"),
 }
 
-print(config)
-
 connect(
     alias=config["db_alias"],
     db=config["db_name"],

@@ -174,7 +174,11 @@ def get_batch_data():
 # https://github.com/dominiktraxl/pykrakenapi
 @app.route("/api/crypto/fetch/<symbol>", methods=["get"])
 def get_crypto_quote(symbol):
-    data, last = kraken.get_ohlc_data(symbol)
+    try:
+        data, last = kraken.get_ohlc_data(symbol)
+    except ValueError as e:
+        print(f"Weird pandas error: ", str(e))
+        return "PANDAS ERR", 500
 
     # get latest entry - this API is in reverse chrono thank god...
     latest = data.iloc[0]
