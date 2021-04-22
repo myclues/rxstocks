@@ -12,7 +12,7 @@ export interface Quote {
 export const getQuote = (symbol): Promise<Quote> => axios.get(`${host}/api/fetch/${symbol}`)
     .then(resp => resp.data)
     .catch(err => {
-        console.error(`ERROR FETCHING ${symbol}\t\t`, err.response.data);
+        console.error(`ERROR FETCHING ${symbol}\t\t`, err.response.status, err.response.statusText);
     });
 
 export const getHistory = (symbol): Promise<Quote[]> => axios.get(`${host}/api/history/${symbol}`)
@@ -24,5 +24,5 @@ export const getHistory = (symbol): Promise<Quote[]> => axios.get(`${host}/api/h
 export const getCryptoQuote = (symbol): Promise<Quote> => axios.get(`${host}/api/crypto/fetch/${symbol}`)
     .then(resp => resp.data)
     .catch(err => {
-        console.error(`ERROR FETCHING ${symbol}\t\t`, err.response.data);
+        console.error(`ERROR FETCHING ${symbol}\t\t`, err.response.data, err.response.statusText);
     });
