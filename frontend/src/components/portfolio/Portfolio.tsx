@@ -43,6 +43,9 @@ const toDollars = (number: number) => Math.round(number * 1000000) / 1000000;
 
 const formatDate = (d: dayjs.Dayjs) => d.format('MMM D, HH:mm');
 
+const closestOrLatestStatus = (dt: dayjs.Dayjs, statuses: PortfolioStatus[]) => 
+    _.find(statuses, s => dt.diff(s.datetime, 's') <= 30) || statuses[statuses.length -1];
+
 const TechComponent = () => {
     let [state, setState] = useState<PortfolioState>(initialState);
 
@@ -128,27 +131,27 @@ const TechComponent = () => {
             {
                 name: 'stash',
                 data: _.map(state.quoteHistory, q => {
-                    const status = _.find(state.statuses, s => q.datetime.diff(s.datetime, 's') <= 30);
+                    const status = closestOrLatestStatus(q.datetime, state.statuses);
                     return status ? status.stash : null;
                 }),
             }, {
                 name: 'total',
                 data: _.map(state.quoteHistory, q => {
-                    const status = _.find(state.statuses, s => q.datetime.diff(s.datetime, 's') <= 30);
+                    const status = closestOrLatestStatus(q.datetime, state.statuses);
                     return status ? (status.stash + status.currentCash + (status.numShares * q.price)) : null;
                 }),
             },
             {
                 name: 'stocks',
                 data: _.map(state.quoteHistory, q => {
-                    const status = _.find(state.statuses, s => q.datetime.diff(s.datetime, 's') <= 30);
+                    const status = closestOrLatestStatus(q.datetime, state.statuses);
                     return status ? (status.numShares * q.price) : null;
                 }),
             },
             {
                 name: 'cash',
                 data: _.map(state.quoteHistory, q => {
-                    const status = _.find(state.statuses, s => q.datetime.diff(s.datetime, 's') <= 30);
+                    const status = closestOrLatestStatus(q.datetime, state.statuses);
                     return status ? status.currentCash : null;
                 }),
             },
@@ -189,6 +192,7 @@ const TechComponent = () => {
                         <p>Portfolio value end: <span className="strong">${toDollars(portfolioValue(latestStatus(state.statuses)))}</span></p>
                         <p>Net gains: <span className="strong">${toDollars(netGainLoss(10000, latestStatus(state.statuses)))} ({(Math.round(toDollars(netGainLoss(10000, latestStatus(state.statuses))) * 100) / 10000)}%)</span></p>
                         <p>Stash: <span className="strong">${toDollars(latestStatus(state.statuses).stash)}</span></p>
+                        <p>Liquid: <span className="strong">${toDollars(portfolioValue(latestStatus(state.statuses)) - latestStatus(state.statuses).stash)}</span></p>
                     </div>
                 )}
             </div>
